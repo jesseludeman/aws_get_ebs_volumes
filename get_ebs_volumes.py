@@ -63,7 +63,18 @@ if __name__ == "__main__":
     # Establish EC2 session, and set the region
     ec2 = boto3.client("ec2", region_name="ap-southeast-2")
 
+    # Setup argparse here to enable command line functionality with parameters and arguments.
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--generate-csv", help="Generates a CSV report for the current EBS volumes in the current working directory", action="store_true")
+    parser.add_argument("--delete", help="Deletes the EBS volumes in the current AWS account", action="store_true")
+    args = parser.parse_args()
+
+    if args.generate_csv:
+        generate_csv_report(session, client)
+    if args.delete:
+        delete_unattached_ebs_volumes(session, client)
+
     # Call the functions here
-    get_ebs_volumes(ec2)
-    generate_csv_report(ec2)
-    delete_unattached_ebs_volumes(ec2)
+    #get_ebs_volumes(ec2)
+    #generate_csv_report(ec2)
+    #delete_unattached_ebs_volumes(ec2)
