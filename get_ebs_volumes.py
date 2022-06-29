@@ -73,8 +73,3 @@ if __name__ == "__main__":
         generate_csv_report(session, client)
     if args.delete:
         delete_unattached_ebs_volumes(session, client)
-
-    # Call the functions here
-    #get_ebs_volumes(ec2)
-    #generate_csv_report(ec2)
-    #delete_unattached_ebs_volumes(ec2)
