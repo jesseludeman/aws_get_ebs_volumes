@@ -2,18 +2,20 @@ import boto3
 import csv
 import argparse
 
+
 def get_ebs_volumes(ec2):
     """
     Retrieves all EBS volumes with status 'available' and 'size'.
     Any volume with this status are NOT connected to an EC2 instance and can be safely deleted.
     Returns a nested list.
     """
-    
+
     # Empty list for EBS volumes
-    unattachedVolumes = [[],[]]
+    unattachedVolumes = [[], []]
 
     # Get 'available' EBS volumes, which are not attached to any instance
-    volumes = ec2.describe_volumes(Filters=[{'Name': 'status', 'Values': ['available']}], DryRun=False)
+    volumes = ec2.describe_volumes(
+        Filters=[{'Name': 'status', 'Values': ['available']}], DryRun=False)
 
     # Iterate through the collection of EBS volumes
     try:
@@ -24,6 +26,7 @@ def get_ebs_volumes(ec2):
         print("No unattached volumes found", e)
 
     return unattachedVolumes
+
 
 def generate_csv_report(ec2):
     """
@@ -39,6 +42,7 @@ def generate_csv_report(ec2):
 
         writer.writerow(headers)
         writer.writerows(zip(volumes[0], volumes[1]))
+
 
 def delete_unattached_ebs_volumes(ec2):
     """
@@ -56,8 +60,9 @@ def delete_unattached_ebs_volumes(ec2):
                 print("Deleting " + volume)
                 ec2.delete_volume(VolumeId=volume)
     except Exception as exc:
-        # Return the list 
+        # Return the list
         return volumes
+
 
 if __name__ == "__main__":
     # Establish EC2 session, and set the region
@@ -65,8 +70,10 @@ if __name__ == "__main__":
 
     # Setup argparse here to enable command line functionality with parameters and arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generate-csv", help="Generates a CSV report for the current EBS volumes in the current working directory", action="store_true")
-    parser.add_argument("--delete", help="Deletes the EBS volumes in the current AWS account", action="store_true")
+    parser.add_argument(
+        "--generate-csv", help="Generates a CSV report for the current EBS volumes in the current working directory", action="store_true")
+    parser.add_argument(
+        "--delete", help="Deletes the EBS volumes in the current AWS account", action="store_true")
     args = parser.parse_args()
 
     if args.generate_csv:
